@@ -7,6 +7,7 @@ use crate::{
     db
 };
 use crate::models::device::{
+    FindAllResponse,
     NewDevice,
     RegisterPayload,
     RegisterResponse
@@ -27,4 +28,15 @@ pub async fn register_device(
     let device = db::create_device(&state.db_pool, &new_device).await?;
 
     Ok(Json(RegisterResponse{ device_id: device.id }))
+}
+
+pub async fn find_all_user_devices(
+    auth_wrapper: AuthRequired,
+    State(state): State<AppState>,
+) -> Result<Json<FindAllResponse>, AppError> {
+    let user = auth_wrapper.0;
+
+    let devices = db::find_user_devices(&state.db_pool, user.user_id).await?;
+
+    Ok(Json(FindAllResponse { devices }))
 }

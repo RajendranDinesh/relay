@@ -90,3 +90,20 @@ pub async fn create_device(pool: &PgPool, new_device: &NewDevice<'_>) -> Result<
 
     Ok(device)
 }
+
+pub async fn find_user_devices(pool: &PgPool, user_id: Uuid) -> Result<Vec<Device>, AppError> {
+    let devices = sqlx::query_as!(
+       Device,
+       r#"
+       SELECT id, device_name, user_id, created_at, updated_at
+       FROM devices
+       WHERE user_id = $1
+       "#,
+       user_id
+   )
+   .fetch_all(pool)
+   .await
+   .map_err(AppError::DatabaseError)?;
+
+   Ok(devices)
+}

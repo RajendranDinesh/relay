@@ -28,3 +28,8 @@ pub struct RegisterPayload {
 pub struct RegisterResponse {
     pub device_id: Uuid,
 }
+
+#[derive(Debug, Serialize)]
+pub struct FindAllResponse {
+    pub devices: Vec<Device>,
+}
