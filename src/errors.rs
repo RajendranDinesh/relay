@@ -31,6 +31,9 @@ pub enum AppError {
     #[error("User already exists")]
     UserAlreadyExists,
 
+    #[error("Device already exists")]
+    DeviceAlreadyExists,
+
     #[error("Bad request: {0}")]
     BadRequest(String),
 
@@ -66,8 +69,11 @@ impl IntoResponse for AppError {
             AppError::Unauthorized => {
                 (StatusCode::UNAUTHORIZED, "Authentication required".to_string())
             }
-             AppError::UserAlreadyExists => {
+            AppError::UserAlreadyExists => {
                 (StatusCode::CONFLICT, "Username is already in use".to_string()) 
+            }
+            AppError::DeviceAlreadyExists => {
+                (StatusCode::CONFLICT, "Device Name is already in use".to_string()) 
             }
             AppError::BadRequest(msg) => {
                 (StatusCode::BAD_REQUEST, msg)

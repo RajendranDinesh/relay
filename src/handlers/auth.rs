@@ -1,5 +1,5 @@
 use axum::{extract::State, Json};
-use crate::models::user::{RegisterPayload, LoginPayload, LoginResponse};
+use crate::models::user::{RegisterPayload, LoginPayload, LoginResponse, NewUser};
 use crate::db;
 use crate::auth::{password, jwt};
 use crate::errors::AppError;
@@ -16,7 +16,7 @@ pub async fn register_handler(
 
     let hashed_password = password::hash_password(&payload.password)?;
 
-    let new_user_data = crate::models::user::NewUser {
+    let new_user_data = NewUser {
         username: &payload.username,
         password_hash: &hashed_password,
     };

@@ -74,6 +74,7 @@ async fn main() -> Result<(), AppError> {
         .route("/health", get(|| async { "OK" })) // Simple health check
         .route("/register", post(handlers::auth::register_handler))
         .route("/login", post(handlers::auth::login_handler))
+        .route("/device", post(handlers::device::register_device))
         // Apply state and CORS layer
         .with_state(app_state)
         .layer(cors)
