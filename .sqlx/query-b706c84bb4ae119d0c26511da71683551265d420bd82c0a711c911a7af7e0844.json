@@ -1,0 +1,50 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT id, device_id, sender, message, received_at\n        FROM sms\n        WHERE device_id = $1\n        AND ($2::timestamptz IS NULL OR received_at >= $2)\n        AND ($3::timestamptz IS NULL OR received_at <= $3)\n        ORDER BY received_at DESC\n        LIMIT $4 OFFSET $5\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "device_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "sender",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "message",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "received_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Timestamptz",
+        "Timestamptz",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "b706c84bb4ae119d0c26511da71683551265d420bd82c0a711c911a7af7e0844"
+}

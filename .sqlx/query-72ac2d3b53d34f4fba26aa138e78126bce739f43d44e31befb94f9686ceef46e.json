@@ -1,0 +1,24 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT COUNT(*) FROM sms\n        WHERE device_id = $1\n        AND ($2::timestamptz IS NULL OR received_at >= $2)\n        AND ($3::timestamptz IS NULL OR received_at <= $3)\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "count",
+        "type_info": "Int8"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Timestamptz",
+        "Timestamptz"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "72ac2d3b53d34f4fba26aa138e78126bce739f43d44e31befb94f9686ceef46e"
+}
