@@ -3,6 +3,7 @@ use tracing::error;
 use uuid::Uuid;
 
 use crate::errors::AppError;
+use crate::models::sms::{NewSms, Sms};
 use crate::models::user::{User, NewUser};
 use crate::models::device::{NewDevice, Device};
 
@@ -106,4 +107,23 @@ pub async fn find_user_devices(pool: &PgPool, user_id: Uuid) -> Result<Vec<Devic
    .map_err(AppError::DatabaseError)?;
 
    Ok(devices)
+}
+
+pub async fn create_sms(pool: &PgPool, sms: &NewSms<'_>) -> Result<Sms, AppError> {
+    let sms = sqlx::query_as!(
+        Sms,
+        r#"
+        INSERT INTO sms (device_id, sender, message)
+        VALUES ($1, $2, $3)
+        RETURNING id, device_id, sender, message, received_at
+        "#,
+        sms.device_id,
+        sms.sender,
+        sms.message
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(AppError::DatabaseError)?;
+
+    Ok(sms)
 }
