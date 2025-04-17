@@ -50,12 +50,12 @@ async fn main() -> Result<(), AppError> {
     info!("Database pool created successfully");
 
     // Run migrations
-    // info!("Running database migrations...");
-    // sqlx::migrate!("./migrations") // Point to your migrations folder
-    //     .run(&db_pool)
-    //     .await
-    //     .map_err(|e| AppError::DatabaseError(sqlx::Error::Migrate(Box::new(e))))?;
-    // info!("Migrations completed.");
+    info!("Running database migrations...");
+    sqlx::migrate!("./migrations") // Point to your migrations folder
+        .run(&db_pool)
+        .await
+        .map_err(|e| AppError::DatabaseError(sqlx::Error::Migrate(Box::new(e))))?;
+    info!("Migrations completed.");
 
     // Create application state
     let app_state = AppState {
