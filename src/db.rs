@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use sqlx::PgPool;
 use tracing::error;
 use uuid::Uuid;
@@ -126,4 +127,49 @@ pub async fn create_sms(pool: &PgPool, sms: &NewSms<'_>) -> Result<Sms, AppError
     .map_err(AppError::DatabaseError)?;
 
     Ok(sms)
+}
+
+pub async fn get_sms_by_device_with_filters(
+    pool: &PgPool,
+    device_id: Uuid,
+    from: Option<DateTime<Utc>>,
+    to: Option<DateTime<Utc>>,
+    limit: i64,
+    offset: i64,
+) -> Result<(Vec<Sms>, i64), AppError> {
+    let rows = sqlx::query_as!(
+        Sms,
+        r#"
+        SELECT id, device_id, sender, message, received_at
+        FROM sms
+        WHERE device_id = $1
+        AND ($2::timestamptz IS NULL OR received_at >= $2)
+        AND ($3::timestamptz IS NULL OR received_at <= $3)
+        ORDER BY received_at DESC
+        LIMIT $4 OFFSET $5
+        "#,
+        device_id,
+        from,
+        to,
+        limit,
+        offset,
+    )
+    .fetch_all(pool)
+    .await?;
+
+    let total = sqlx::query_scalar!(
+        r#"
+        SELECT COUNT(*) FROM sms
+        WHERE device_id = $1
+        AND ($2::timestamptz IS NULL OR received_at >= $2)
+        AND ($3::timestamptz IS NULL OR received_at <= $3)
+        "#,
+        device_id,
+        from,
+        to,
+    )
+    .fetch_one(pool)
+    .await?;
+
+    Ok((rows, total.unwrap_or(0)))
 }

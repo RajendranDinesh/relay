@@ -30,3 +30,18 @@ pub struct SmsPayload {
 pub struct SmsResponse {
     pub id: Uuid,
 }
+
+#[derive(Debug, Deserialize)]
+pub struct SmsQuery {
+    pub device_id: Uuid,
+    pub limit: Option<i64>,
+    pub offset: Option<i64>,
+    pub from: Option<chrono::DateTime<chrono::Utc>>,
+    pub to: Option<chrono::DateTime<chrono::Utc>>,
+}
+
+#[derive(Serialize)]
+pub struct SmsListResponse {
+    pub total: i64,
+    pub data: Vec<Sms>,
+}

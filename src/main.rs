@@ -77,6 +77,7 @@ async fn main() -> Result<(), AppError> {
         .route("/device", post(handlers::device::register_device))
         .route("/device", get(handlers::device::find_all_user_devices))
         .route("/sms", post(handlers::sms::sms_handler))
+        .route("/sms", get(handlers::sms::get_sms_handler))
         // Apply state and CORS layer
         .with_state(app_state)
         .layer(cors)
